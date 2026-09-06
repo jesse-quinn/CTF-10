@@ -1,0 +1,19 @@
+services:
+    gallery:
+        build:
+            context: .
+            dockerfile: gallery.Dockerfile
+        container_name: gallery
+        restart: unless-stopped
+        dns:
+            - 1.1.1.1
+            - 1.0.0.1
+        ports:
+            - "23:22"
+            - "8080:8080"
+        volumes:
+            - ./html/logs:/usr/share/nginx/html/gallery/logs
+            # Misconfiguration: the host Docker socket is exposed inside the
+            # gallery container. Root inside this container can therefore control
+            # the outer Docker engine and break out to the main host.
+            - /var/run/docker.sock:/var/run/docker.sock

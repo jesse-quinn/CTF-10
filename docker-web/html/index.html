@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coastline Gallery</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #d0d7de;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0 20px 60px;
+        }
+        header {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 48px 0 24px;
+            border-bottom: 1px solid #21262d;
+        }
+        header h1 { margin: 0 0 8px; font-weight: 600; }
+        header p { margin: 0; color: #8b949e; }
+        .grid {
+            max-width: 960px;
+            margin: 32px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        figure {
+            margin: 0;
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        figure img { display: block; width: 100%; height: 180px; object-fit: cover; }
+        figcaption { padding: 10px 12px; font-size: 14px; color: #8b949e; }
+        footer { max-width: 960px; margin: 48px auto 0; color: #6e7681; font-size: 13px; }
+        a { color: #58a6ff; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Coastline Gallery</h1>
+        <p>Field exports from the last shoot. Full-resolution originals are in
+        <a href="/images/">/images/</a>.</p>
+    </header>
+
+    <section class="grid">
+        <figure>
+            <img src="/images/harbor.jpg" alt="Harbor at dawn">
+            <figcaption>Harbor at dawn</figcaption>
+        </figure>
+        <figure>
+            <img src="/images/dunes.jpg" alt="Dunes">
+            <figcaption>Dunes, low tide</figcaption>
+        </figure>
+        <figure>
+            <img src="/images/pier.jpg" alt="Old pier">
+            <figcaption>Old pier</figcaption>
+        </figure>
+        <figure>
+            <img src="/images/cliffs.jpg" alt="Cliffs">
+            <figcaption>Cliffs, north bay</figcaption>
+        </figure>
+    </section>
+
+    <!--
+      Note to the team: these are straight-off-the-camera exports. We keep the
+      EXIF and the embedded shot notes intact for the archive, so please do not
+      run them through a metadata stripper before publishing.
+    -->
+
+    <footer>
+        Originals published unedited. Handle metadata with care.
+    </footer>
+</body>
+</html>

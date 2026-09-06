@@ -1,0 +1,9 @@
+# /etc/crontab: system-wide crontab for the gallery box.
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Roll up the staging directory into a backup archive once a minute. The job runs
+# as root from inside the staging directory and passes a bare wildcard to tar.
+# m h dom mon dow user  command
+* * * * * root cd /var/backups/site && /bin/tar -czf /var/backups/site.tar.gz *
