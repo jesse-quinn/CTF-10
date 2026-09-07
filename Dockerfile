@@ -21,7 +21,10 @@ RUN apt-get update \
 # Copying flags + inner stack sources
 COPY ./main_flags/root.txt /root/root.txt
 COPY ./main_flags/user.txt /home/iris/user.txt
-COPY ./docker-web /home/iris/docker-web
+# The inner stack is staged outside any player home so the unprivileged outer
+# account (iris) cannot read its secrets, first-flag source, or breakout notes
+# before performing the intended escalation.
+COPY ./docker-web /opt/stack
 
 # The recovered credential for the outer host. iris keeps her own SSH password in
 # a backup config in her home. It is only reachable once the player is root on the
@@ -37,9 +40,9 @@ RUN echo "Permissions for flags" \
     && chown root:root /root/root.txt && chmod 0400 /root/root.txt \
     && chown iris:iris /home/iris/user.txt && chmod 0400 /home/iris/user.txt \
     && echo "Permissions for inner stack sources" \
-    && chmod 0755 /home/iris/docker-web && chown -R root:root /home/iris/docker-web \
-    && chmod 0400 -R /home/iris/docker-web/flags \
-    && mkdir -p /home/iris/docker-web/html/logs && chmod 0777 /home/iris/docker-web/html/logs
+    && chown -R root:root /opt/stack && chmod 0700 /opt/stack \
+    && chmod 0400 -R /opt/stack/flags \
+    && mkdir -p /opt/stack/html/logs && chmod 0777 /opt/stack/html/logs
 
 # Store the inner Docker engine's data on a volume so the nested engine does not
 # run overlay-on-overlay (matches the official docker:dind image). Without this,
@@ -52,4 +55,4 @@ EXPOSE 22 23 8080
 COPY ./entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
-CMD ["docker", "compose", "-f", "/home/iris/docker-web/docker-compose.yaml", "up"]
+CMD ["docker", "compose", "-f", "/opt/stack/docker-compose.yaml", "up"]

@@ -7,21 +7,29 @@ ARG DOCKER_CLI_VERSION=29.8.0
 # data. curl and ca-certificates fetch the static Docker client for the final
 # socket breakout.
 RUN apt-get update && \
-    apt-get install -y sudo nano openssh-server cron tar curl ca-certificates \
+    apt-get install -y nano openssh-server cron tar curl ca-certificates \
         imagemagick libimage-exiftool-perl zip && \
     echo "Installing a static Docker CLI (used for the final socket breakout)" \
     && arch="$(uname -m)" \
+    && case "$arch" in \
+         x86_64)  docker_cli_sha256="cc21815cf1e2efed867dc9c8b96b46ffed8ea176ffab32b0aacb54726ded8f25" ;; \
+         aarch64) docker_cli_sha256="1462a696be6029bd478d7d60d7f3c31cdd15affd1178a4a278aaf4a1d1b7f8b5" ;; \
+         *) echo "unsupported architecture: $arch" >&2; exit 1 ;; \
+       esac \
     && curl -fsSL "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_CLI_VERSION}.tgz" -o /tmp/docker.tgz \
+    && echo "${docker_cli_sha256}  /tmp/docker.tgz" | sha256sum -c - \
     && tar -xzf /tmp/docker.tgz -C /usr/local/bin --strip-components=1 docker/docker \
     && rm -f /tmp/docker.tgz
 
-# Users and passwords. milo's password is the credential hidden inside one of the
-# gallery images; rebeca-style extra accounts are intentionally omitted here.
+# Users and passwords. This challenge has a single non-root user, milo, whose
+# password is the credential hidden inside one of the gallery images; there are
+# no decoy accounts.
 RUN useradd -m -s /bin/bash milo && \
     echo "milo:a1KSpvKXWhw6jQkY7N" | chpasswd && \
     ln -sf /dev/null /home/milo/.bash_history && \
     ln -sf /dev/null /root/.bash_history && \
     mkdir -p /var/run/sshd && \
+    ssh-keygen -A && \
     sed -i 's/#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && \
     sed -i 's/#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 

@@ -99,3 +99,10 @@ container SSH.
   step in Stage 5 exists to exercise the recovered credential and reach the outer
   user flag, and demonstrates that both techniques (socket mount and stolen
   credential) work.
+- Maintainer note: the inner stack sources are staged on the outer host at
+  `/opt/stack` (`root:root`, mode `0700`), outside any player home, so the
+  unprivileged outer account `iris` cannot read the inner secrets, the first
+  inner flag source, or the breakout notes before escalating. The compose file
+  is at `/opt/stack/docker-compose.yaml`.
+- Maintainer note: the gallery image ships no `sudo`; container-root escalation
+  is the tar wildcard cron job only, so there is no unconfigured-`sudo` decoy.

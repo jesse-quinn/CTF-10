@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-09-06 - Challenge integrity fixes
+
+Hygiene and reproducibility fixes from the 2026-09-06 adversarial review. No
+flag values change and no scoring changes; every flag stays reachable by its
+intended reader.
+
+### Changed
+
+- Relocated the inner stack from `/home/iris/docker-web` to `/opt/stack`
+  (`root:root`, mode `0700`) so the unprivileged outer account `iris` can no
+  longer read the inner-stack secrets, the first inner flag source, milo's
+  credential note, or the socket-breakout notes before escalating. The outer
+  entrypoint now brings the stack up from `/opt/stack/docker-compose.yaml`.
+- Removed the installed-but-unconfigured `sudo` from the gallery image; the only
+  container-root escalation is the tar wildcard cron job.
+- Rewrote a vestigial build comment that referenced an unrelated challenge's
+  account to describe this challenge's single non-root user model.
+
+### Added
+
+- Per-architecture SHA-256 verification of the fetched static Docker CLI tarball
+  in `gallery.Dockerfile` (`x86_64` and `aarch64`), so a substituted binary
+  fails the build.
+- Explicit `ssh-keygen -A` in the gallery sshd RUN block, mirroring the outer
+  image, so host keys are generated deterministically rather than relying on the
+  package postinst.
+
+### Notes
+
+- Tested gallery package set (`nginx:1.30.4` base, 2026-09):
+  `nano openssh-server cron tar curl ca-certificates imagemagick
+  libimage-exiftool-perl zip`; the imaging tools are purged after build.
+
 ## Initial release
 
 Original forensics and steganography challenge built on the docker-in-docker
